@@ -66,6 +66,7 @@ import org.opensaml.saml.saml2.core.StatusMessage;
 import org.opensaml.saml.saml2.core.impl.StatusCodeBuilder;
 import org.opensaml.saml.saml2.core.impl.StatusMessageBuilder;
 import org.opensaml.saml.saml2.encryption.Decrypter;
+import org.opensaml.saml.saml2.encryption.EncryptedElementTypeEncryptedKeyResolver;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.opensaml.saml.saml2.metadata.IDPSSODescriptor;
 import org.opensaml.saml.saml2.metadata.KeyDescriptor;
@@ -75,8 +76,7 @@ import org.opensaml.security.credential.Credential;
 import org.opensaml.security.credential.UsageType;
 import org.opensaml.security.x509.BasicX509Credential;
 import org.opensaml.xmlsec.SignatureSigningParameters;
-import org.opensaml.xmlsec.encryption.support.DecryptionException;
-import org.opensaml.xmlsec.encryption.support.InlineEncryptedKeyResolver;
+import org.opensaml.xmlsec.encryption.support.*;
 import org.opensaml.xmlsec.keyinfo.KeyInfoSupport;
 import org.opensaml.xmlsec.keyinfo.impl.StaticKeyInfoCredentialResolver;
 import org.opensaml.xmlsec.keyinfo.impl.X509KeyInfoGeneratorFactory;
@@ -894,12 +894,23 @@ public class SamlClient {
       return;
     }
     for (EncryptedAssertion encryptedAssertion : response.getEncryptedAssertions()) {
+      // ----------------------------------------------------------------------------------------------
+      // Patch original Coveo code as explained here: https://stackoverflow.com/a/49922058/565637
+      // For Apple/Okta IDP, adding `EncryptedElementTypeEncryptedKeyResolver` should be enough.
+      // But for increased compatability we add other resolvers too, including the original `InlineEncryptedKeyResolver`.
+      final List<EncryptedKeyResolver> list = new ArrayList<>();
+      list.add(new InlineEncryptedKeyResolver());
+      list.add(new EncryptedElementTypeEncryptedKeyResolver());
+      list.add(new SimpleRetrievalMethodEncryptedKeyResolver());
+      final ChainingEncryptedKeyResolver encryptedKeyResolver = new ChainingEncryptedKeyResolver(list);
+      // ----------------------------------------------------------------------------------------------
+
       // Create a decrypter.
       Decrypter decrypter =
           new Decrypter(
               null,
               new StaticKeyInfoCredentialResolver(spCredential),
-              new InlineEncryptedKeyResolver());
+              encryptedKeyResolver);
 
       decrypter.setRootInNewDocument(true);
 

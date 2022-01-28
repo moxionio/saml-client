@@ -1,5 +1,7 @@
 package com.coveo.saml;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.List;
 
 import org.joda.time.DateTime;
@@ -120,15 +122,15 @@ class ValidatorUtils {
    */
   private static void enforceConditions(Conditions conditions, DateTime _now, long notBeforeSkew)
       throws SamlException {
-    DateTime now = _now != null ? _now : DateTime.now();
+    Instant now = _now != null ? _now.toDate().toInstant() : Instant.now();
 
-    DateTime notBefore = conditions.getNotBefore();
-    DateTime skewedNotBefore = notBefore.minus(notBeforeSkew);
+    Instant notBefore = conditions.getNotBefore();
+    Instant skewedNotBefore = notBefore.minus(Duration.ofMillis(notBeforeSkew));
     if (now.isBefore(skewedNotBefore)) {
       throw new SamlException("The assertion cannot be used before " + notBefore.toString());
     }
 
-    DateTime notOnOrAfter = conditions.getNotOnOrAfter();
+    Instant notOnOrAfter = conditions.getNotOnOrAfter();
     if (now.isAfter(notOnOrAfter)) {
       throw new SamlException("The assertion cannot be used after  " + notOnOrAfter.toString());
     }

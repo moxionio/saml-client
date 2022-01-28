@@ -17,6 +17,7 @@ import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.security.spec.PKCS8EncodedKeySpec;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -693,7 +694,7 @@ public class SamlClient {
     request.setID("z" + UUID.randomUUID().toString()); // ADFS needs IDs to start with a letter
 
     request.setVersion(SAMLVersion.VERSION_20);
-    request.setIssueInstant(DateTime.now());
+    request.setIssueInstant(Instant.now());
 
     Issuer issuer = (Issuer) buildSamlObject(Issuer.DEFAULT_ELEMENT_NAME);
     issuer.setValue(relyingPartyIdentifier);
@@ -785,7 +786,7 @@ public class SamlClient {
     response.setID("z" + UUID.randomUUID().toString()); // ADFS needs IDs to start with a letter
 
     response.setVersion(SAMLVersion.VERSION_20);
-    response.setIssueInstant(DateTime.now());
+    response.setIssueInstant(Instant.now());
 
     Issuer issuer = (Issuer) buildSamlObject(Issuer.DEFAULT_ELEMENT_NAME);
     issuer.setValue(relyingPartyIdentifier);

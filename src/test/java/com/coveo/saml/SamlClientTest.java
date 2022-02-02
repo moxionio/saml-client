@@ -309,7 +309,7 @@ public class SamlClientTest {
     try {
       decodeAndValidateSamlLogoutResponse(decodedSamlLogoutResponse, "POST");
       fail("We must have an exception if the signature isn't valid");
-    } catch (SamlException ignore) {
+    } catch (SamlException|IllegalArgumentException ignore) {
     }
   }
 
@@ -388,7 +388,7 @@ public class SamlClientTest {
     try {
       client.decodeAndValidateSamlLogoutRequest(encodedLogoutRequest, nameId, "POST");
       fail("We must have an exception if the signature isn't valid");
-    } catch (SamlException ignore) {
+    } catch (SamlException|IllegalArgumentException ignore) {
     }
   }
 

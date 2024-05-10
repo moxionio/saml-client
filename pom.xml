@@ -75,17 +75,29 @@
       <groupId>org.opensaml</groupId>
       <artifactId>opensaml-saml-api</artifactId>
       <version>${opensaml.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.bouncycastle</groupId>
+          <artifactId>bcprov-jdk15on</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.opensaml</groupId>
       <artifactId>opensaml-saml-impl</artifactId>
       <version>${opensaml.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.bouncycastle</groupId>
+          <artifactId>bcprov-jdk15on</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <!-- transitive via opensaml, bumped here to address vulnerabilities -->
       <groupId>org.bouncycastle</groupId>
       <artifactId>bcprov-jdk18on</artifactId>
-      <version>1.77</version>
+      <version>1.78.1</version>
     </dependency>
     <dependency>
       <!-- transitive via opensaml, bumped here from 3.2.1 to 3.2.2 to address vulnerabilities. -->
